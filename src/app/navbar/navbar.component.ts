@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injectable, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
@@ -8,26 +8,44 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/observable/of';
 
 
-@Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css'],
-})
-export class NavbarComponent implements OnInit {
-  public model: any;
-  private url: string;
+@Injectable()
+export class UrbanDictionaryService {
   private headerObj: any;
-  private data: any;
 
   private static prepareHeaders() {
     const headerDict = {
       'X-Mashape-Authorization': 'QwXbIDZpMjmshn9njwGtM2LJrhPJp1vzY84jsnbSVrXtBkW3MR',
       'Accept': 'text/plain',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type'
     };
     return {
       headers: new HttpHeaders(headerDict),
     };
+  }
+
+  constructor(private http: HttpClient) {
+    this.headerObj = UrbanDictionaryService.prepareHeaders();
+  }
+
+  search(term: string): any {
+    if (term === '') {
+      return Observable.of([]);
+    }
+    const url = 'https://mashape-community-urban-dictionary.p.mashape.com/define?term=' + term;
+    return this.http.get(url, this.headerObj).map(res =>
+      res['list'].map((list) => list.definition));
+  }
+}
+
+@Component({
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.css'],
+  providers: [UrbanDictionaryService]
+})
+export class NavbarComponent implements OnInit {
+  constructor(private urbanDictionaryService: UrbanDictionaryService) {
+
   }
 
   search = (text$: Observable<string>) =>
@@ -35,26 +53,10 @@ export class NavbarComponent implements OnInit {
       .debounceTime(200)
       .distinctUntilChanged()
       .switchMap(term => {
-        this.doSearch(term);
-        console.log(this.data);
-        return this.data;
+        return this.urbanDictionaryService.search(term);
       })
-
-  constructor(private http: HttpClient) {
-
-  }
 
   ngOnInit() {
 
-  }
-
-  private doSearch(term: string) {
-    this.headerObj = NavbarComponent.prepareHeaders();
-    this.url = 'https://mashape-community-urban-dictionary.p.mashape.com/define?term=' + term;
-    this.http
-      .get(this.url, this.headerObj)
-      .subscribe((data: any) => {
-        this.data = Observable.of(data.list);
-      });
   }
 }
