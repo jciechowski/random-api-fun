@@ -1,7 +1,7 @@
 <ngb-tabset>
   <ngb-tab title="Search">
     <ng-template ngbTabContent>
-      <label for="typeahead-basic">Search for a state:</label>
+      <label for="typeahead-basic">Search for an abbreviation definition:</label>
       <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"/>
       <hr>
       <pre>Model: {{ model | json }}</pre>

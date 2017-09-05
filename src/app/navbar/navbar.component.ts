@@ -4,15 +4,9 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/map';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/observable/of';
 
-const states = ['Alabama', 'Alaska', 'American Samoa', 'Arizona', 'Arkansas', 'California', 'Colorado',
-  'Connecticut', 'Delaware', 'District Of Columbia', 'Federated States Of Micronesia', 'Florida', 'Georgia',
-  'Guam', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine',
-  'Marshall Islands', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana',
-  'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
-  'Northern Mariana Islands', 'Ohio', 'Oklahoma', 'Oregon', 'Palau', 'Pennsylvania', 'Puerto Rico', 'Rhode Island',
-  'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virgin Islands', 'Virginia',
-  'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'];
 
 @Component({
   selector: 'app-navbar',
@@ -21,38 +15,46 @@ const states = ['Alabama', 'Alaska', 'American Samoa', 'Arizona', 'Arkansas', 'C
 })
 export class NavbarComponent implements OnInit {
   public model: any;
+  private url: string;
+  private headerObj: any;
+  private data: any;
+
+  private static prepareHeaders() {
+    const headerDict = {
+      'X-Mashape-Authorization': 'QwXbIDZpMjmshn9njwGtM2LJrhPJp1vzY84jsnbSVrXtBkW3MR',
+      'Accept': 'text/plain',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    };
+    return {
+      headers: new HttpHeaders(headerDict),
+    };
+  }
 
   search = (text$: Observable<string>) =>
     text$
       .debounceTime(200)
       .distinctUntilChanged()
-      .map(term => term.length < 2 ? []
-        : states.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+      .switchMap(term => {
+        this.doSearch(term);
+        console.log(this.data);
+        return this.data;
+      })
 
   constructor(private http: HttpClient) {
 
   }
 
   ngOnInit() {
-    const headerDict = {
-        'X-Mashape-Authorization': 'QwXbIDZpMjmshn9njwGtM2LJrhPJp1vzY84jsnbSVrXtBkW3MR',
-        'Accept': 'text/plain',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      };
-    const headerObj = {
-      headers: new HttpHeaders(headerDict),
-    };
-    this.http
-      .get('https://mashape-community-urban-dictionary.p.mashape.com/define?term=wat', headerObj)
-      .subscribe(data => {
-        console.log(data);
-      });
+
   }
 
-  /*
-  curl --get --include 'https://mashape-community-urban-dictionary.p.mashape.com/define?term=wat' \
-    -H 'X-Mashape-Key: QwXbIDZpMjmshn9njwGtM2LJrhPJp1vzY84jsnbSVrXtBkW3MR' \
-    -H 'Accept: text/plain'
-
-   */
+  private doSearch(term: string) {
+    this.headerObj = NavbarComponent.prepareHeaders();
+    this.url = 'https://mashape-community-urban-dictionary.p.mashape.com/define?term=' + term;
+    this.http
+      .get(this.url, this.headerObj)
+      .subscribe((data: any) => {
+        this.data = Observable.of(data.list);
+      });
+  }
 }
