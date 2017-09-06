@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { UrbanDictionaryService } from './urban-dictionary.service';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,7 @@ import { NavbarComponent } from './navbar/navbar.component';
     FormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [UrbanDictionaryService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
