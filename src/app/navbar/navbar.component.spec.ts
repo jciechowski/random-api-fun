@@ -1,6 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NavbarComponent } from './navbar.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
+import { UrbanDictionaryService } from '../urban-dictionary.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
@@ -8,9 +12,18 @@ describe('NavbarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NavbarComponent ]
+      imports: [
+        FormsModule,
+        NgbModule.forRoot(),
+        HttpClientModule
+      ],
+      declarations: [NavbarComponent],
+      providers: [
+        UrbanDictionaryService,
+        HttpClient
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
