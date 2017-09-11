@@ -14,6 +14,7 @@ import { UrbanDictionaryService } from '../urban-dictionary.service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
+  public model: any;
   constructor(private urbanDictionaryService: UrbanDictionaryService) {
 
   }
