@@ -26,11 +26,9 @@ export class UrbanDictionaryService {
       return Observable.of([]);
     }
     const url = 'https://mashape-community-urban-dictionary.p.mashape.com/define?term=' + term;
-    return this.http.get(url, this.headerObj).map(res =>
-     {
-       // console.log(url);
-       // console.log(res)
-      res['list'].map((list) => list.definition)});
+    return this.http.get(url, this.headerObj).map(res => {
+      res['list'].map((list) => list.definition);
+    });
   }
 
 }
