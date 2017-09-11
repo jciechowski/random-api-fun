@@ -6,6 +6,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/observable/of';
 import { UrbanDictionaryService } from '../urban-dictionary.service';
+import 'rxjs/add/operator/do';
 
 
 @Component({
@@ -15,6 +16,7 @@ import { UrbanDictionaryService } from '../urban-dictionary.service';
 })
 export class NavbarComponent implements OnInit {
   public model: any;
+  loading: any;
   constructor(private urbanDictionaryService: UrbanDictionaryService) {
 
   }
@@ -23,9 +25,10 @@ export class NavbarComponent implements OnInit {
     text$
       .debounceTime(200)
       .distinctUntilChanged()
+      .do(() => this.loading = true)
       .switchMap(term => {
         return this.urbanDictionaryService.search(term);
-      })
+      }).do(() => this.loading = false)
 
   ngOnInit() {
   }
