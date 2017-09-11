@@ -3,14 +3,14 @@
     <ng-template ngbTabContent>
       <label for="typeahead-basic">Search for an abbreviation definition:</label>
       <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search"/>
+      <p class="lead" *ngIf="loading">
+        <img src="../../assets/source.gif" class="spinner">
+      </p>
       <hr>
-
-      <div class="text-center">
-        <p class="lead" *ngIf="loading">
-          <img src="../../assets/source.gif" class="spinner">
-        </p>
-      </div>
-      <pre>Model: {{ model | json }}</pre>
     </ng-template>
   </ngb-tab>
 </ngb-tabset>
+<div *ngIf="model && loading == false">
+  mamy dane!
+  <pre>Model: {{ model | json }}</pre>
+</div>
