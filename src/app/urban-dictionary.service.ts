@@ -3,25 +3,27 @@ import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { APP_CONFIG } from './app-config';
 
+interface Definition {
+  definition: string;
+  permalink: string;
+  thumbs_up: number;
+  thumbs_down: number;
+}
+
+interface DefinitionResponse {
+  list: Definition[];
+}
+
 @Injectable()
 export class UrbanDictionaryService {
   private headerObj: any;
   private ApiUrl: string;
+  private ApiKey: string;
 
   constructor(@Inject(APP_CONFIG) config, private http: HttpClient) {
     this.ApiUrl = config.ApiEndpoint;
-    this.headerObj = UrbanDictionaryService.prepareHeaders();
-  }
-
-  private static prepareHeaders() {
-    const headerDict = {
-      'X-Mashape-Authorization': 'QwXbIDZpMjmshn9njwGtM2LJrhPJp1vzY84jsnbSVrXtBkW3MR',
-      'Accept': 'text/plain',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    };
-    return {
-      headers: new HttpHeaders(headerDict),
-    };
+    this.ApiKey = config.ApiKey;
+    this.headerObj = this.prepareHeaders();
   }
 
   search(term: string): any {
@@ -29,9 +31,22 @@ export class UrbanDictionaryService {
       return Observable.of([]);
     }
     const url = `${this.ApiUrl}${term}`;
-    return this.http.get(url, this.headerObj).map(res =>
-      res['list'].map((list) => list.definition)
+    return this.http.get<DefinitionResponse>(url, this.headerObj).map(res => {
+        console.log(res['list']);
+        return res['list'].map((list) => list.definition)
+      }
     );
+  }
+
+  private prepareHeaders() {
+    const headerDict = {
+      'X-Mashape-Authorization': this.ApiKey,
+      'Accept': 'text/plain',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    };
+    return {
+      headers: new HttpHeaders(headerDict),
+    };
   }
 
 }

@@ -5,6 +5,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { UrbanDictionaryService } from '../urban-dictionary.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { APP_CONFIG } from "../app-config";
+import { CONFIG } from '../app-config';
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
@@ -20,7 +22,8 @@ describe('NavbarComponent', () => {
       declarations: [NavbarComponent],
       providers: [
         UrbanDictionaryService,
-        HttpClient
+        HttpClient,
+        {provide: APP_CONFIG, useValue: CONFIG}
       ]
     })
       .compileComponents();

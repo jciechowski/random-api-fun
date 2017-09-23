@@ -4,6 +4,7 @@ import { UrbanDictionaryService } from './urban-dictionary.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { APP_CONFIG, CONFIG } from './app-config';
 
 describe('UrbanDictionaryService', () => {
   let service: UrbanDictionaryService;
@@ -14,7 +15,8 @@ describe('UrbanDictionaryService', () => {
       imports: [HttpClientModule, HttpClientTestingModule],
       providers: [
         UrbanDictionaryService,
-        HttpClient
+        HttpClient,
+        {provide: APP_CONFIG, useValue: CONFIG}
       ]
     });
     service = TestBed.get(UrbanDictionaryService);

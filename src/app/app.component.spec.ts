@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { UrbanDictionaryService } from './urban-dictionary.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { APP_CONFIG } from "./app-config";
+import { CONFIG } from './app-config';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -21,7 +23,8 @@ describe('AppComponent', () => {
       ],
       providers: [
         UrbanDictionaryService,
-        HttpClient
+        HttpClient,
+        {provide: APP_CONFIG, useValue: CONFIG}
       ]
     }).compileComponents();
   }));
