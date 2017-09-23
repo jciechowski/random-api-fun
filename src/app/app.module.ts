@@ -7,6 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { UrbanDictionaryService } from './urban-dictionary.service';
+import { APP_CONFIG, CONFIG } from './app-config';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,10 @@ import { UrbanDictionaryService } from './urban-dictionary.service';
     FormsModule,
     HttpClientModule
   ],
-  providers: [UrbanDictionaryService],
+  providers: [
+    UrbanDictionaryService,
+    {provide: APP_CONFIG, useValue: CONFIG}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
