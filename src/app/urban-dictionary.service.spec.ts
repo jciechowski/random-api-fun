@@ -7,6 +7,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 
 describe('UrbanDictionaryService', () => {
   let service: UrbanDictionaryService;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -17,6 +18,7 @@ describe('UrbanDictionaryService', () => {
       ]
     });
     service = TestBed.get(UrbanDictionaryService);
+    httpMock = TestBed.get(HttpTestingController);
   });
 
   it('should be created', () => {
@@ -29,14 +31,16 @@ describe('UrbanDictionaryService', () => {
   });
 
   it('should return correct value for correct term', () => {
-    const http = TestBed.get(HttpTestingController);
     const fakeResponse = {list: [{definition: '1'}, {definition: '2'}]};
 
-    let result;
-    service.search('dummySearch').subscribe(data => {
-      result = data;
+    service.search('dummySearch').subscribe(result => {
+      expect(result.length).toBe(2);
+      expect(result).toEqual(['1', '2']);
     });
 
-    http.expectOne('https://mashape-community-urban-dictionary.p.mashape.com/define?term=dummySearch').flush(fakeResponse);
+    const req = httpMock.expectOne('https://mashape-community-urban-dictionary.p.mashape.com/define?term=dummySearch');
+    expect(req.request.method).toBe('GET');
+    req.flush(fakeResponse);
+
   });
 });
